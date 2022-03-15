@@ -1,0 +1,40 @@
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+name: Cross Test
+
+jobs:
+  ubuntu:
+    name: ubuntu
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - arm-unknown-linux-gnueabi
+          - arm-unknown-linux-gnueabihf
+          - armv5te-unknown-linux-gnueabi
+          - armv7-unknown-linux-gnueabihf
+          - i586-unknown-linux-gnu
+          - i686-unknown-linux-gnu
+          - mips-unknown-linux-gnu
+          - mipsel-unknown-linux-gnu
+          - powerpc-unknown-linux-gnu
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ matrix.target }}
+          override: true
+      - uses: actions-rs/cargo@v1
+        with:
+          use-cross: true
+          command: test
+          args: --all-features --target=${{ matrix.target }} -- --test-threads=1
