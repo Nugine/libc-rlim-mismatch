@@ -7,20 +7,28 @@ fn rlim_value() {
         let mut child = Command::new(cmd[0]);
         child.args(&cmd[1..]);
         child.stdout(Stdio::piped());
+        child.stderr(Stdio::inherit());
         let output = child.spawn().unwrap().wait_with_output().unwrap();
         String::from_utf8(output.stdout).unwrap()
     }
 
     const CPP_CODE: &str = r#"
-        #include<iostream>
-        #include<cstdint>
-        #include<sys/resource.h>
+        #include <iostream>
+        #include <cstdint>
+        #include <sys/resource.h>
+        #include <typeinfo>
         using namespace std;
     
         int main(){
             cout<<RLIM_INFINITY<<'\n';
             cout<<RLIM_SAVED_CUR<<'\n';
             cout<<RLIM_SAVED_MAX<<'\n';
+            cerr<<typeid(unsigned int).name()<<'\n';
+            cerr<<typeid(unsigned long).name()<<'\n';
+            cerr<<typeid(unsigned long long).name()<<'\n';
+            cerr<<typeid(RLIM_INFINITY).name()<<'\n';
+            cerr<<sizeof(RLIM_INFINITY)<<'\n';
+            cerr<<sizeof(rlim_t)<<'\n';
             return 0;
         }
     "#;

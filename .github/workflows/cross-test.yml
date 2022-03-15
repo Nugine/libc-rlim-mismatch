@@ -37,4 +37,4 @@ jobs:
         with:
           use-cross: true
           command: test
-          args: --all-features --target=${{ matrix.target }} -- --test-threads=1
+          args: --all-features --target=${{ matrix.target }} -- --test-threads=1 --nocapture
